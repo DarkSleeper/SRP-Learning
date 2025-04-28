@@ -1,6 +1,6 @@
-Shader "Custom RP/Unlit" {
+Shader "Custom RP/Lit" {
     Properties {
-        _BaseColor("Base Color", Color) = (1.0, 1.0, 1.0, 1.0)
+        _BaseColor("Base Color", Color) = (0.5, 0.5, 0.5, 1.0)
         _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
         [Toggle(_CLIPPING)] _Clipping("Alpha Clipping", Float) = 0
         _BaseMap("Texture", 2D) = "white" {}
@@ -11,6 +11,10 @@ Shader "Custom RP/Unlit" {
 
     SubShader {
         Pass {
+            Tags {
+                "LightMode" = "CustomLit"
+            }
+            
             Blend [_SrcBlend] [_DstBlend]
             ZWrite[_ZWrite]
 
@@ -18,9 +22,9 @@ Shader "Custom RP/Unlit" {
             #pragma target 3.5
             #pragma shader_feature _CLIPPING
             #pragma multi_compile_instancing
-            #pragma vertex UnlitPassVertex
-            #pragma fragment UnlitPassFragment
-            #include "UnlitPass.hlsl"
+            #pragma vertex LitPassVertex
+            #pragma fragment LitPassFragment
+            #include "LitPass.hlsl"
             ENDHLSL
         }
     }
