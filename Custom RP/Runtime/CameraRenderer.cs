@@ -36,8 +36,10 @@ public partial class CameraRenderer
 
         buffer.BeginSample(SampleName);
         ExecuteBuffer();
+        // 设置光源信息并绘制阴影贴图
         lighting.Setup(context, cullingResults, shadowSettings);
         buffer.EndSample(SampleName);
+        // 设置相机信息并Clear Render Target
         Setup();
         DrawVisibleGeometry(useDynamicBatching, useGPUInstancing);
         DrawUnsupportedShaders();

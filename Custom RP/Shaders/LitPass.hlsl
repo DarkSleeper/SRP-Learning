@@ -15,6 +15,8 @@ SAMPLER(sampler_BaseMap);
 // CBUFFER_START(UnityPerMaterial)
 //     float4 _BaseColor;
 // CBUFFER_END
+
+// 改用GPU Instancing
 UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
     UNITY_DEFINE_INSTANCED_PROP(float4, _BaseMap_ST)
     UNITY_DEFINE_INSTANCED_PROP(float4, _BaseColor)
@@ -59,20 +61,24 @@ float4 LitPassFragment(Varyings input) : SV_TARGET {
         clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff));
     #endif
 
+    // 设置表面属性
     Surface surface;
     surface.position = input.positionWS;
     surface.normal = normalize(input.normalWS);
     surface.viewDirection = normalize(_WorldSpaceCameraPos - input.positionWS);
+    surface.depth = -TransformWorldToView(input.positionWS).z;
     surface.color = base.rgb;
     surface.alpha = base.a;
     surface.metallic = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Metallic);
     surface.smoothness = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Smoothness);
     
+    // 获取材质的brdf属性
     #if defined(_PREMULTIPLY_ALPHA)
         BRDF brdf = GetBRDF(surface, true);
     #else
         BRDF brdf = GetBRDF(surface);
     #endif
+    // 计算光照结果
     float3 color = GetLighting(surface, brdf);
     return float4(color, surface.alpha);
 }

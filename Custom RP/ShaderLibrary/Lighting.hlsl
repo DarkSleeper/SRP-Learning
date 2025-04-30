@@ -1,6 +1,7 @@
 #ifndef CUSTOM_LIGHTING_INCLUDED
 #define CUSTOM_LIGHTING_INCLUDED
 
+// 高光系数
 float SpecularStrength(Surface surface, BRDF brdf, Light light) {
     float3 h = SafeNormalize(light.direction + surface.viewDirection);
     float nh2 = Square(saturate(dot(surface.normal, h)));
@@ -11,22 +12,28 @@ float SpecularStrength(Surface surface, BRDF brdf, Light light) {
     return r2 / (d2 * max(0.1, lh2) * normalization);
 }
 
+// fr项
 float3 DirectBRDF(Surface surface, BRDF brdf, Light light) {
     return SpecularStrength(surface, brdf, light) * brdf.specular + brdf.diffuse;
 }
 
+// cos * L项
 float3 IncomingLight(Surface surface, Light light) {
     return saturate(dot(surface.normal, light.direction) * light.attenuation) * light.color;
 }
 
+// 单个光源的光照计算
 float3 GetLighting(Surface surface, BRDF brdf, Light light) {
     return IncomingLight(surface, light) * DirectBRDF(surface, brdf, light);
 }
 
+// 光照计算的主函数
 float3 GetLighting(Surface surfaceWS, BRDF brdf) {
+    ShadowData shadowData = GetShadowData(surfaceWS);
     float3 color = 0.0;
     for (int i = 0; i < GetDirectionalLightCount(); i++) {
-        color += GetLighting(surfaceWS, brdf, GetDirectionalLight(i, surfaceWS));
+        Light light = GetDirectionalLight(i, surfaceWS, shadowData);
+        color += GetLighting(surfaceWS, brdf, light);
     }
     return color;
 }

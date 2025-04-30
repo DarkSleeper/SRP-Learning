@@ -22,11 +22,16 @@
 #define UNITY_PREV_MATRIX_I_M   unity_prev_Matrix_IM
 #define UNITY_MATRIX_P          glstate_matrix_projection
 
+// 引入GPU instancing和空间变换的辅助函数和宏定义
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 
 float Square(float v) {
     return v * v;
+}
+
+float DistanceSquared(float3 pA, float3 pB) {
+    return dot(pA - pB, pA - pB);
 }
 
 #endif
