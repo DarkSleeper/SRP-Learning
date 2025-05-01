@@ -13,7 +13,9 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _PREMULTIPLY_ALPHA
-  m_InvalidKeywords: []
+  - _RECEIVE_SHADOWS
+  m_InvalidKeywords:
+  - _SHADOWS_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -80,6 +82,8 @@ Material:
     - _Parallax: 0.02
     - _PremulAlpha: 1
     - _PremultiplyAlpha: 1
+    - _ReceiveShadows: 1
+    - _Shadows: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
