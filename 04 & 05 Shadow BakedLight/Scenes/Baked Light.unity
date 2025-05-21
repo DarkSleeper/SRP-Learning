@@ -1629,12 +1629,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 331147505}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f4e5bddc090f46f8acfc6475bf68617, type: 3}
+  m_Script: {fileID: 11500000, guid: 2a05327e255c5e44996aeb2359708cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  material: {fileID: 2100000, guid: 9ce407b9b7d2c47128e7fe8386a3b5ab, type: 2}
-  lightProbeVolume: {fileID: 331147508}
+  material: {fileID: 2100000, guid: cf2abfcf52242534a8325c74bcfcde5c, type: 2}
+  lightProbeVolume: {fileID: 0}
 --- !u!4 &331147507
 Transform:
   m_ObjectHideFlags: 0
@@ -2363,7 +2363,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 23701cc9f528a49b882383c714a9a851, type: 2}
+  - {fileID: 2100000, guid: 1e0ddcf6753660f4c92e39a7722be553, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3470,7 +3470,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 23701cc9f528a49b882383c714a9a851, type: 2}
+  - {fileID: 2100000, guid: 1e0ddcf6753660f4c92e39a7722be553, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3583,7 +3583,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 1
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -3933,7 +3933,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 23701cc9f528a49b882383c714a9a851, type: 2}
+  - {fileID: 2100000, guid: 1e0ddcf6753660f4c92e39a7722be553, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5734,7 +5734,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 23701cc9f528a49b882383c714a9a851, type: 2}
+  - {fileID: 2100000, guid: 1e0ddcf6753660f4c92e39a7722be553, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6328,7 +6328,7 @@ LightProbeProxyVolume:
   m_ResolutionY: 2
   m_ResolutionZ: 8
   m_ResolutionProbesPerUnit: 0.25
-  m_BoundingBoxSize: {x: Infinity, y: Infinity, z: Infinity}
+  m_BoundingBoxSize: {x: 1, y: 1, z: 1}
   m_BoundingBoxOrigin: {x: 0, y: 0, z: 0}
   m_ResolutionMode: 1
   m_ProbePositionMode: 0
@@ -9366,7 +9366,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 23701cc9f528a49b882383c714a9a851, type: 2}
+  - {fileID: 2100000, guid: 1e0ddcf6753660f4c92e39a7722be553, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10498,7 +10498,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 871516f7a930b2f4cbc66d35c27c1f4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseColor: {r: 1, g: 1, b: 1, a: 1}
+  baseColor: {r: 1, g: 1, b: 1, a: 0.5019608}
   cutoff: 0.5
   metallic: 0
   smoothness: 0.5
@@ -10544,7 +10544,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3f679c73ce40f49b4922406c03e95520, type: 2}
+  - {fileID: 2100000, guid: 2e89703179849034ead6e56e19718456, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

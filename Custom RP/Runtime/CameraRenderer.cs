@@ -79,17 +79,22 @@ public partial class CameraRenderer
         }; // 正交排序或按距离排序
         var drawingSettings = new DrawingSettings(
             unlitShaderTagId, sortingSettings
-        ) {
+        )
+        {
             enableDynamicBatching = useDynamicBatching,
-            enableInstancing = useGPUInstancing
+            enableInstancing = useGPUInstancing,
+            perObjectData =
+                PerObjectData.Lightmaps | PerObjectData.LightProbe |
+                PerObjectData.LightProbeProxyVolume
         };
         drawingSettings.SetShaderPassName(1, litShaderTagId);
-        var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
+        var filteringSettings = new FilteringSettings(RenderQueueRange.opaque); // 不透明物体
 
         context.DrawRenderers(cullingResults, ref drawingSettings, ref filteringSettings);
 
         context.DrawSkybox(camera);
 
+        // 绘制半透明物体
         sortingSettings.criteria = SortingCriteria.CommonTransparent;
         drawingSettings.sortingSettings = sortingSettings;
         filteringSettings.renderQueueRange = RenderQueueRange.transparent;
