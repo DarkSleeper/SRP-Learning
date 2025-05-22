@@ -22,6 +22,11 @@
 #define UNITY_PREV_MATRIX_I_M   unity_prev_Matrix_IM
 #define UNITY_MATRIX_P          glstate_matrix_projection
 
+// 为GPU instancing启用occlusion probe
+#if defined(_SHADOW_MASK_DISTANCE)
+    #define SHADOWS_SHADOWMASK
+#endif
+
 // 引入GPU instancing和空间变换的辅助函数和宏定义
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"

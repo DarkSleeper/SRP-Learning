@@ -37,11 +37,18 @@ struct DirectionalShadowData {
     float normalBias;
 };
 
+// 阴影烘焙
+struct ShadowMask {
+    bool distance;
+    float4 shadows;
+};
+
 // 级联层级是按片元计算的，和光源无关
 struct ShadowData {
     int cascadeIndex;
     float cascadeBlend;
     float strength;
+    ShadowMask shadowMask;
 };
 
 // 采样阴影贴图，并返回阴影程度
@@ -110,6 +117,9 @@ float FadeShadowStrength(float distance, float scale, float fade) {
 // 计算级联层级
 ShadowData GetShadowData(Surface surfaceWS) {
     ShadowData data;
+    data.shadowMask.distance = false;
+    data.shadowMask.shadows = 1.0;
+
     data.cascadeBlend = 1.0;
     // 超出阴影距离的淡出
     data.strength = FadeShadowStrength(

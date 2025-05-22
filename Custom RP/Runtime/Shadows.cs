@@ -15,37 +15,6 @@ public class Shadows {
 
     int ShadowedDirectionalLightCount;
 
-    // 设置辅助变量
-    public void Setup (
-        ScriptableRenderContext context, CullingResults cullingResults,
-        ShadowSettings settings
-    ) {
-        this.context = context;
-        this.cullingResults = cullingResults;
-        this.settings = settings;
-
-        ShadowedDirectionalLightCount = 0;
-    }
-
-    // 执行命令并清空缓存
-    void ExecuteBuffer() {
-        context.ExecuteCommandBuffer(buffer);
-        buffer.Clear();
-    }
-
-    // 绘制阴影贴图的主函数
-    public void Render() {
-        if (ShadowedDirectionalLightCount > 0) {
-            RenderDirectionalShadows();
-        }
-        else {
-            buffer.GetTemporaryRT(
-                dirShadowAtlasId, 1, 1,
-                32, FilterMode.Bilinear, RenderTextureFormat.Shadowmap
-            );
-        }
-    }
-
     const int maxShadowedDirectionalLightCount = 4, maxCascades = 4;
 
     static int
@@ -74,6 +43,55 @@ public class Shadows {
         "_CASCADE_BLEND_SOFT",
         "_CASCADE_BLEND_DITHER"
     };
+
+    // 烘焙阴影的辅助变量
+    static string[] shadowMaskKeywords = {
+        "_SHADOW_MASK_DISTANCE"
+    };
+
+    bool useShadowMask;
+
+    // 设置辅助变量
+    public void Setup(
+        ScriptableRenderContext context, CullingResults cullingResults,
+        ShadowSettings settings
+    )
+    {
+        this.context = context;
+        this.cullingResults = cullingResults;
+        this.settings = settings;
+
+        ShadowedDirectionalLightCount = 0;
+
+        useShadowMask = false;
+    }
+
+    // 执行命令并清空缓存
+    void ExecuteBuffer() {
+        context.ExecuteCommandBuffer(buffer);
+        buffer.Clear();
+    }
+
+    // 绘制阴影贴图的主函数
+    public void Render()
+    {
+        if (ShadowedDirectionalLightCount > 0)
+        {
+            RenderDirectionalShadows();
+        }
+        else
+        {
+            buffer.GetTemporaryRT(
+                dirShadowAtlasId, 1, 1,
+                32, FilterMode.Bilinear, RenderTextureFormat.Shadowmap
+            );
+        }
+
+        buffer.BeginSample(bufferName);
+        SetKeywords(shadowMaskKeywords, useShadowMask ? 0 : -1);
+        buffer.EndSample(bufferName);
+        ExecuteBuffer();
+    }
 
     // 绘制方向光阴影贴图的主函数
     void RenderDirectionalShadows() {
@@ -247,6 +265,15 @@ public class Shadows {
             light.shadows != LightShadows.None && light.shadowStrength > 0 &&
             cullingResults.GetShadowCasterBounds(visibleLightIndex, out Bounds b)
         ) {
+            // 判断是否用了阴影烘焙
+            var lightBaking = light.bakingOutput;
+            if (
+                lightBaking.lightmapBakeType == LightmapBakeType.Mixed &&
+                lightBaking.mixedLightingMode == MixedLightingMode.Shadowmask
+            ) {
+                useShadowMask = true;
+            }
+
             ShadowedDirectionalLights[ShadowedDirectionalLightCount] = 
                 new ShadowedDirectionalLight {
                     visibleLightIndex = visibleLightIndex,
