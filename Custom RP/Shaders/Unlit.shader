@@ -41,6 +41,7 @@ Shader "Custom RP/Unlit" {
             #pragma target 3.5
             #pragma shader_feature _CLIPPING
             #pragma shader_feature _ _SHADOWS_CLIP _SHADOWS_DITHER
+            #pragma multi_compile _ LOD_FADE_CROSSFADE
             #pragma multi_compile_instancing
             #pragma vertex ShadowCasterPassVertex
             #pragma fragment ShadowCasterPassFragment
