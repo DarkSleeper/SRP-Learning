@@ -7,6 +7,7 @@ Shader "Custom RP/Lit" {
         [KeywordEnum(On, Clip, Dither, Off)] _Shadows("Shadows", Float) = 0
         _Metallic("Metallic", Range(0.0, 1.0)) = 0.0
         _Smoothness("Smoothness", Range(0.0, 1.0)) = 0.5
+        _Fresnel("Fresnel", Range(0, 1)) = 1
         [NoScaleOffset] _EmissionMap("Emission", 2D) = "white" { }
         [HDR] _EmissionColor("Emission", Color) = (0.0, 0.0, 0.0, 0.0)
         [Toggle(_PREMULTIPLY_ALPHA)] _PremulAlpha("Premultiply Alpha", Float) = 0

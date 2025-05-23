@@ -55,7 +55,7 @@ public class Lighting
             var visibleLight = visibleLights[i];
             if (visibleLight.lightType == UnityEngine.LightType.Directional) {
                 SetupDirectionalLight(dirLightCount++, ref visibleLight);
-                if (dirLightCount > maxDirLightCount) {
+                if (dirLightCount >= maxDirLightCount) {
                     break;
                 }
             }
