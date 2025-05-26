@@ -15,6 +15,7 @@ CBUFFER_START(_CustomLight)
     float4 _OtherLightPositions[MAX_OTHER_LIGHT_COUNT];
     float4 _OtherLightDirections[MAX_OTHER_LIGHT_COUNT];
     float4 _OtherLightSpotAngles[MAX_OTHER_LIGHT_COUNT];
+    float4 _OtherLightShadowData[MAX_OTHER_LIGHT_COUNT];
 CBUFFER_END
 
 struct Light {
@@ -45,6 +46,14 @@ DirectionalShadowData GetDirectionalShadowData(
     return data;
 }
 
+// 获取其他光源的阴影遮罩信息
+OtherShadowData GetOtherShadowData(int lightIndex) {
+    OtherShadowData data;
+    data.strength = _OtherLightShadowData[lightIndex].x;
+    data.shadowMaskChannel = _OtherLightShadowData[lightIndex].w;
+    return data;
+}
+
 // 获取方向光光源信息，并计算阴影衰减
 Light GetDirectionalLight(int index, Surface surfaceWS, ShadowData shadowData) {
     Light light;
@@ -70,7 +79,10 @@ Light GetOtherLight(int index, Surface surfaceWS, ShadowData shadowData) {
         saturate(dot(_OtherLightDirections[index].xyz, light.direction) *
         spotAngles.x + spotAngles.y)
     );
-    light.attenuation = spotAttenuation * rangeAttenuation / distanceSqr;
+    OtherShadowData otherShadowData = GetOtherShadowData(index); // 用于shadow Mask
+    light.attenuation = 
+        GetOtherShadowAttenuation(otherShadowData, shadowData, surfaceWS) *
+        spotAttenuation * rangeAttenuation / distanceSqr;
     return light;
 }
 #endif

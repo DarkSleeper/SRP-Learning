@@ -22,7 +22,7 @@ public partial class CameraRenderer
 
     public void Render(
         ScriptableRenderContext context, Camera camera,
-        bool useDynamicBatching, bool useGPUInstancing,
+        bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject,
         ShadowSettings shadowSettings
     ) {
         this.context = context;
@@ -37,11 +37,11 @@ public partial class CameraRenderer
         buffer.BeginSample(SampleName);
         ExecuteBuffer();
         // 设置光源信息并绘制阴影贴图
-        lighting.Setup(context, cullingResults, shadowSettings);
+        lighting.Setup(context, cullingResults, shadowSettings, useLightsPerObject);
         buffer.EndSample(SampleName);
         // 设置相机信息并Clear Render Target
         Setup();
-        DrawVisibleGeometry(useDynamicBatching, useGPUInstancing);
+        DrawVisibleGeometry(useDynamicBatching, useGPUInstancing, useLightsPerObject);
         DrawUnsupportedShaders();
         DrawGizmos();
         lighting.Cleanup();
@@ -73,7 +73,12 @@ public partial class CameraRenderer
         unlitShaderTagId = new ShaderTagId("SRPDefaultUnlit"),
         litShaderTagId = new ShaderTagId("CustomLit");
 
-    void DrawVisibleGeometry(bool useDynamicBatching, bool useGPUInstancing) {
+    void DrawVisibleGeometry(
+        bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject
+    ) {
+        PerObjectData lightsPerObjectFlags = useLightsPerObject ?
+            PerObjectData.LightData | PerObjectData.LightIndices :
+            PerObjectData.None;
         var sortingSettings = new SortingSettings(camera) {
             criteria = SortingCriteria.CommonOpaque
         }; // 正交排序或按距离排序
@@ -88,7 +93,8 @@ public partial class CameraRenderer
                 PerObjectData.Lightmaps | PerObjectData.ShadowMask |
                 PerObjectData.LightProbe | PerObjectData.OcclusionProbe |
                 PerObjectData.LightProbeProxyVolume |
-                PerObjectData.OcclusionProbeProxyVolume
+                PerObjectData.OcclusionProbeProxyVolume |
+                lightsPerObjectFlags
         };
         drawingSettings.SetShaderPassName(1, litShaderTagId);
         var filteringSettings = new FilteringSettings(RenderQueueRange.opaque); // 不透明物体

@@ -161,6 +161,31 @@ float GetDirectionalShadowAttenuation(
     return shadow;
 }
 
+struct OtherShadowData {
+    float strength;
+    int shadowMaskChannel;
+};
+
+// 对于其他阴影，只处理shadow mask
+float GetOtherShadowAttenuation(
+    OtherShadowData other, ShadowData global, Surface surfaceWS
+) {
+    #if !defined(_RECEIVE_SHADOWS)
+        return 1.0;
+    #endif
+
+    float shadow;
+    if (other.strength > 0.0) {
+        shadow = GetBakedShadow(
+            global.shadowMask, other.shadowMaskChannel, other.strength
+        );
+    }
+    else {
+        shadow = 1.0;
+    }
+    return shadow;
+}
+
 // 计算阴影超出范围的淡出效果
 float FadeShadowStrength(float distance, float scale, float fade) {
     return saturate((1.0 - distance * scale) * fade); // 公式里是除法，但是可以预先将uniform取倒数，在shader里用乘法
