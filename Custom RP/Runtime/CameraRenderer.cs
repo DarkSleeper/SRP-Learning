@@ -12,7 +12,8 @@ public partial class CameraRenderer
 
     const string bufferName = "Render Camera";
 
-    CommandBuffer buffer = new CommandBuffer {
+    CommandBuffer buffer = new CommandBuffer
+    {
         name = bufferName
     };
 
@@ -20,17 +21,23 @@ public partial class CameraRenderer
 
     Lighting lighting = new Lighting();
 
+    PostFXStack postFXStack = new PostFXStack();
+
+    static int frameBufferId = Shader.PropertyToID("_CameraFrameBuffer");
+
     public void Render(
         ScriptableRenderContext context, Camera camera,
         bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject,
-        ShadowSettings shadowSettings
-    ) {
+        ShadowSettings shadowSettings, PostFXSettings postFXSettings
+    )
+    {
         this.context = context;
         this.camera = camera;
 
         PrepareBuffer();
         PrepareForSceneWindow();
-        if (!Cull(shadowSettings.maxDistance)) {
+        if (!Cull(shadowSettings.maxDistance))
+        {
             return;
         }
 
@@ -38,18 +45,27 @@ public partial class CameraRenderer
         ExecuteBuffer();
         // 设置光源信息并绘制阴影贴图
         lighting.Setup(context, cullingResults, shadowSettings, useLightsPerObject);
+        // 设置后处理信息
+        postFXStack.Setup(context, camera, postFXSettings);
         buffer.EndSample(SampleName);
         // 设置相机信息并Clear Render Target
         Setup();
         DrawVisibleGeometry(useDynamicBatching, useGPUInstancing, useLightsPerObject);
         DrawUnsupportedShaders();
-        DrawGizmos();
-        lighting.Cleanup();
+        DrawGizmosBeforeFX();
+        if (postFXStack.IsActive)
+        {
+            postFXStack.Render(frameBufferId);
+        }
+        DrawGizmosAfterFX();
+        Cleanup();
         Submit();
     }
 
-    bool Cull(float maxShadowDistance) {
-        if (camera.TryGetCullingParameters(out ScriptableCullingParameters p)) {
+    bool Cull(float maxShadowDistance)
+    {
+        if (camera.TryGetCullingParameters(out ScriptableCullingParameters p))
+        {
             p.shadowDistance = Mathf.Min(maxShadowDistance, camera.farClipPlane);
             cullingResults = context.Cull(ref p);
             return true;
@@ -57,9 +73,28 @@ public partial class CameraRenderer
         else return false;
     }
 
-    void Setup() {
+    void Setup()
+    {
         context.SetupCameraProperties(camera);
         CameraClearFlags flags = camera.clearFlags;
+
+        if (postFXStack.IsActive)
+        {
+            if (flags > CameraClearFlags.Color)
+            {
+                flags = CameraClearFlags.Color;
+            }
+            // 对于后处理，先绘制到指定的贴图上
+            buffer.GetTemporaryRT(
+                frameBufferId, camera.pixelWidth, camera.pixelHeight,
+                32, FilterMode.Bilinear, RenderTextureFormat.Default
+            );
+            buffer.SetRenderTarget(
+                frameBufferId,
+                RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store
+            );
+        }
+
         buffer.ClearRenderTarget(
             flags <= CameraClearFlags.Depth,
             flags == CameraClearFlags.Color,
@@ -75,11 +110,13 @@ public partial class CameraRenderer
 
     void DrawVisibleGeometry(
         bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject
-    ) {
+    )
+    {
         PerObjectData lightsPerObjectFlags = useLightsPerObject ?
             PerObjectData.LightData | PerObjectData.LightIndices :
             PerObjectData.None;
-        var sortingSettings = new SortingSettings(camera) {
+        var sortingSettings = new SortingSettings(camera)
+        {
             criteria = SortingCriteria.CommonOpaque
         }; // 正交排序或按距离排序
         var drawingSettings = new DrawingSettings(
@@ -107,17 +144,28 @@ public partial class CameraRenderer
         sortingSettings.criteria = SortingCriteria.CommonTransparent;
         drawingSettings.sortingSettings = sortingSettings;
         filteringSettings.renderQueueRange = RenderQueueRange.transparent;
-        context.DrawRenderers(cullingResults,ref drawingSettings, ref filteringSettings);
+        context.DrawRenderers(cullingResults, ref drawingSettings, ref filteringSettings);
     }
 
-    void Submit() {
+    void Submit()
+    {
         buffer.EndSample(SampleName);
         ExecuteBuffer();
         context.Submit();
     }
 
-    void ExecuteBuffer() {
+    void ExecuteBuffer()
+    {
         context.ExecuteCommandBuffer(buffer);
         buffer.Clear();
+    }
+
+    void Cleanup()
+    {
+        lighting.Cleanup();
+        if (postFXStack.IsActive)
+        {
+            buffer.ReleaseTemporaryRT(frameBufferId);
+        }
     }
 }

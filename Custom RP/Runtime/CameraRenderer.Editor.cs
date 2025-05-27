@@ -10,7 +10,9 @@ partial class CameraRenderer
 {
     partial void PrepareBuffer();
 
-    partial void DrawGizmos();
+    partial void DrawGizmosBeforeFX();
+
+    partial void DrawGizmosAfterFX();
 
     partial void DrawUnsupportedShaders();
 
@@ -38,24 +40,34 @@ partial class CameraRenderer
 
     static Material errorMaterial;
 
-    partial void DrawGizmos()
+    partial void DrawGizmosBeforeFX()
     {
         if (Handles.ShouldRenderGizmos()) {
             context.DrawGizmos(camera, GizmoSubset.PreImageEffects);
+        }
+    }
+    
+    partial void DrawGizmosAfterFX()
+    {
+        if (Handles.ShouldRenderGizmos()) {
             context.DrawGizmos(camera, GizmoSubset.PostImageEffects);
         }
     }
 
-    partial void DrawUnsupportedShaders() {
-        if (errorMaterial == null) {
+    partial void DrawUnsupportedShaders()
+    {
+        if (errorMaterial == null)
+        {
             errorMaterial = new Material(Shader.Find("Hidden/InternalErrorShader"));
         }
         var drawingSettings = new DrawingSettings(
             legacyShaderTagIds[0], new SortingSettings(camera)
-        ) {
+        )
+        {
             overrideMaterial = errorMaterial
         };
-        for (int i = 1; i < legacyShaderTagIds.Length; i++) {
+        for (int i = 1; i < legacyShaderTagIds.Length; i++)
+        {
             drawingSettings.SetShaderPassName(i, legacyShaderTagIds[i]);
         }
         var filteringSettings = FilteringSettings.defaultValue;
