@@ -25,8 +25,10 @@ public partial class CameraRenderer
 
     static int frameBufferId = Shader.PropertyToID("_CameraFrameBuffer");
 
+    bool useHDR;
+
     public void Render(
-        ScriptableRenderContext context, Camera camera,
+        ScriptableRenderContext context, Camera camera, bool allowHDR,
         bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject,
         ShadowSettings shadowSettings, PostFXSettings postFXSettings
     )
@@ -40,13 +42,14 @@ public partial class CameraRenderer
         {
             return;
         }
+        useHDR = allowHDR && camera.allowHDR;
 
         buffer.BeginSample(SampleName);
         ExecuteBuffer();
         // 设置光源信息并绘制阴影贴图
         lighting.Setup(context, cullingResults, shadowSettings, useLightsPerObject);
         // 设置后处理信息
-        postFXStack.Setup(context, camera, postFXSettings);
+        postFXStack.Setup(context, camera, postFXSettings, useHDR);
         buffer.EndSample(SampleName);
         // 设置相机信息并Clear Render Target
         Setup();
@@ -87,7 +90,7 @@ public partial class CameraRenderer
             // 对于后处理，先绘制到指定的贴图上
             buffer.GetTemporaryRT(
                 frameBufferId, camera.pixelWidth, camera.pixelHeight,
-                32, FilterMode.Bilinear, RenderTextureFormat.Default
+                32, FilterMode.Bilinear, useHDR ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.Default
             );
             buffer.SetRenderTarget(
                 frameBufferId,
