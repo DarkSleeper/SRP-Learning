@@ -30,7 +30,8 @@ public partial class CameraRenderer
     public void Render(
         ScriptableRenderContext context, Camera camera, bool allowHDR,
         bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject,
-        ShadowSettings shadowSettings, PostFXSettings postFXSettings
+        ShadowSettings shadowSettings, PostFXSettings postFXSettings,
+        int colorLUTResolution
     )
     {
         this.context = context;
@@ -49,7 +50,7 @@ public partial class CameraRenderer
         // 设置光源信息并绘制阴影贴图
         lighting.Setup(context, cullingResults, shadowSettings, useLightsPerObject);
         // 设置后处理信息
-        postFXStack.Setup(context, camera, postFXSettings, useHDR);
+        postFXStack.Setup(context, camera, postFXSettings, useHDR, colorLUTResolution);
         buffer.EndSample(SampleName);
         // 设置相机信息并Clear Render Target
         Setup();

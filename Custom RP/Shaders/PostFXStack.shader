@@ -79,7 +79,47 @@ Shader "Hidden/Custom RP/Post FX Stack" {
                 #pragma fragment BloomVerticalPassFragment
             ENDHLSL
         }
+        
+        Pass {
+            Name "Color Grading None"
 
+            HLSLPROGRAM
+                #pragma target 3.5
+                #pragma vertex DefaultPassVertex
+                #pragma fragment ColorGradingNonePassFragment
+            ENDHLSL
+        }
+
+        Pass {
+            Name "Color Grading ACES"
+
+            HLSLPROGRAM
+                #pragma target 3.5
+                #pragma vertex DefaultPassVertex
+                #pragma fragment ColorGradingACESPassFragment
+            ENDHLSL
+        }
+
+        Pass {
+            Name "Color Grading Neutral"
+
+            HLSLPROGRAM
+                #pragma target 3.5
+                #pragma vertex DefaultPassVertex
+                #pragma fragment ColorGradingNeutralPassFragment
+            ENDHLSL
+        }
+
+        Pass {
+            Name "Color Grading Reinhard"
+
+            HLSLPROGRAM
+                #pragma target 3.5
+                #pragma vertex DefaultPassVertex
+                #pragma fragment ColorGradingReinhardPassFragment
+            ENDHLSL
+        }
+        
         Pass {
             Name "Copy"
 
@@ -91,32 +131,12 @@ Shader "Hidden/Custom RP/Post FX Stack" {
         }
         
         Pass {
-            Name "ToneMappingACES"
+            Name "Final"
 
             HLSLPROGRAM
                 #pragma target 3.5
                 #pragma vertex DefaultPassVertex
-                #pragma fragment ToneMappingACESPassFragment
-            ENDHLSL
-        }
-
-        Pass {
-            Name "ToneMappingNeutral"
-
-            HLSLPROGRAM
-                #pragma target 3.5
-                #pragma vertex DefaultPassVertex
-                #pragma fragment ToneMappingNeutralPassFragment
-            ENDHLSL
-        }
-
-        Pass {
-            Name "ToneMappingReinhard"
-
-            HLSLPROGRAM
-                #pragma target 3.5
-                #pragma vertex DefaultPassVertex
-                #pragma fragment ToneMappingReinhardPassFragment
+                #pragma fragment FinalPassFragment
             ENDHLSL
         }
     }
