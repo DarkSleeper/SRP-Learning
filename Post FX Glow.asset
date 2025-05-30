@@ -10,27 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52f70fe06d153be479fa43bedb902e73, type: 3}
-  m_Name: Post FX Settings
+  m_Name: Post FX Glow
   m_EditorClassIdentifier: 
   shader: {fileID: 4800000, guid: 422c0e15fb9138f4284bf2058d0b5214, type: 3}
   bloom:
-    maxIterations: 16
+    maxIterations: 2
     downscaleLimit: 2
     bicubicUpsampling: 1
-    threshold: 1
+    threshold: 0
     thresholdKnee: 0.5
-    intensity: 0.2
-    fadeFireflies: 1
-    mode: 1
+    intensity: 0.8
+    fadeFireflies: 0
+    mode: 0
     scatter: 0.7
   toneMapping:
     mode: 1
   colorAdjustments:
     postExposure: 0
-    contrast: 0
+    contrast: 100
     colorFilter: {r: 1, g: 1, b: 1, a: 1}
     hueShift: 0
-    saturation: 28
+    saturation: 0
   whiteBalance:
     temperature: 0
     tint: 0
@@ -43,9 +43,9 @@ MonoBehaviour:
     green: {x: 0, y: 1, z: 0}
     blue: {x: 0, y: 0, z: 1}
   shadowsMidtonesHightlights:
-    shadows: {r: 0.7490196, g: 0.6156863, b: 1, a: 1}
-    midtones: {r: 1, g: 0.8509804, b: 0.8509804, a: 1}
-    highlights: {r: 1, g: 0.89411765, b: 0.7921569, a: 1}
+    shadows: {r: 1, g: 1, b: 1, a: 1}
+    midtones: {r: 1, g: 1, b: 1, a: 1}
+    highlights: {r: 1, g: 1, b: 1, a: 1}
     shadowsStart: 0
     shadowsEnd: 0.3
     hightlightsStart: 0.55

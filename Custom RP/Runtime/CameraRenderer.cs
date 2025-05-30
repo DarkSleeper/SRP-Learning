@@ -27,6 +27,8 @@ public partial class CameraRenderer
 
     bool useHDR;
 
+    static CameraSettings defaultCameraSettings = new CameraSettings();
+
     public void Render(
         ScriptableRenderContext context, Camera camera, bool allowHDR,
         bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject,
@@ -36,6 +38,15 @@ public partial class CameraRenderer
     {
         this.context = context;
         this.camera = camera;
+
+        // for PostFX Blend Mode
+        var crpCamera = camera.GetComponent<CustomRenderPipelineCamera>();
+        CameraSettings cameraSettings = crpCamera ? crpCamera.Settings : defaultCameraSettings;
+
+        if (cameraSettings.overridePostFX)
+        {
+            postFXSettings = cameraSettings.postFXSettings;
+        }
 
         PrepareBuffer();
         PrepareForSceneWindow();
@@ -50,7 +61,10 @@ public partial class CameraRenderer
         // 设置光源信息并绘制阴影贴图
         lighting.Setup(context, cullingResults, shadowSettings, useLightsPerObject);
         // 设置后处理信息
-        postFXStack.Setup(context, camera, postFXSettings, useHDR, colorLUTResolution);
+        postFXStack.Setup(
+            context, camera, postFXSettings, useHDR, colorLUTResolution,
+            cameraSettings.finalBlendMode
+        );
         buffer.EndSample(SampleName);
         // 设置相机信息并Clear Render Target
         Setup();
@@ -101,7 +115,7 @@ public partial class CameraRenderer
 
         buffer.ClearRenderTarget(
             flags <= CameraClearFlags.Depth,
-            flags == CameraClearFlags.Color,
+            flags <= CameraClearFlags.Color,
             flags == CameraClearFlags.Color ? camera.backgroundColor.linear : Color.clear
         );
         buffer.BeginSample(SampleName);
