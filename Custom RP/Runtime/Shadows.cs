@@ -284,7 +284,9 @@ public class Shadows
         var shadowSettings = new ShadowDrawingSettings(
             cullingResults, light.visibleLightIndex,
             BatchCullingProjectionType.Orthographic // 2022版本要求说明正交投影，2023版本取消该要求
-        );
+        ) {
+            useRenderingLayerMaskTest = true
+        };
         int cascadeCount = settings.directional.cascadeCount;
         int tileOffset = index * cascadeCount;
         Vector3 ratios = settings.directional.cascadeRatio;
@@ -339,7 +341,9 @@ public class Shadows
         var shadowSettings = new ShadowDrawingSettings(
             cullingResults, light.visibleLightIndex,
             BatchCullingProjectionType.Perspective
-        );
+        ) {
+            useRenderingLayerMaskTest = true
+        };
         // 无cascade
         cullingResults.ComputeSpotShadowMatricesAndCullingPrimitives(
             light.visibleLightIndex, out Matrix4x4 viewMatrix,
@@ -371,7 +375,9 @@ public class Shadows
         var shadowSettings = new ShadowDrawingSettings(
             cullingResults, light.visibleLightIndex,
             BatchCullingProjectionType.Perspective
-        );
+        ) {
+            useRenderingLayerMaskTest = true
+        };
 
         // 利用像素大小计算bias, always 90°
         float texelSize = 2f / tileSize;

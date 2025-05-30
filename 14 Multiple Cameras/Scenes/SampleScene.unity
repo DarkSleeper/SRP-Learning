@@ -757,7 +757,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &97599285
 Transform:
   m_ObjectHideFlags: 0
@@ -1968,9 +1968,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f4e5bddc090f46f8acfc6475bf68617, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  material: {fileID: 2100000, guid: 9ce407b9b7d2c47128e7fe8386a3b5ab, type: 2}
-  lightProbeVolume: {fileID: 0}
 --- !u!4 &331147507
 Transform:
   m_ObjectHideFlags: 0
@@ -3322,11 +3319,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
+    renderingLayerMask: 8
+    maskLights: 1
+    overridePostFX: 1
+    postFXSettings: {fileID: 11400000, guid: aa636cde4dfffac48baf2ffc95fb3b0a, type: 2}
     finalBlendMode:
       source: 1
       destination: 10
-    overridePostFX: 1
-    postFXSettings: {fileID: 11400000, guid: aa636cde4dfffac48baf2ffc95fb3b0a, type: 2}
 --- !u!20 &556230794
 Camera:
   m_ObjectHideFlags: 0
@@ -3354,8 +3353,8 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.25
-    y: 0.25
+    x: 0.5
+    y: 0
     width: 0.5
     height: 0.5
   near clip plane: 0.3
@@ -3410,7 +3409,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!20 &578567834
 Camera:
   m_ObjectHideFlags: 0
@@ -3486,7 +3485,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 578567832}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e526ba78ad3b448e855457ff7b085d8, type: 3}
+  m_Script: {fileID: 11500000, guid: f9148749440695b44bea719d85f87753, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
@@ -4876,7 +4875,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &823469775
 Transform:
   m_ObjectHideFlags: 0
@@ -5365,7 +5364,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &878048795
 Light:
   m_ObjectHideFlags: 0
@@ -6076,7 +6075,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!81 &963194226
 AudioListener:
   m_ObjectHideFlags: 0
@@ -6160,7 +6159,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 963194225}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e526ba78ad3b448e855457ff7b085d8, type: 3}
+  m_Script: {fileID: 11500000, guid: f9148749440695b44bea719d85f87753, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
@@ -6433,7 +6432,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &1053571914
 Light:
   m_ObjectHideFlags: 0
@@ -6528,7 +6527,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!20 &1054065470
 Camera:
   m_ObjectHideFlags: 0
@@ -6604,14 +6603,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1054065468}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e526ba78ad3b448e855457ff7b085d8, type: 3}
+  m_Script: {fileID: 11500000, guid: f9148749440695b44bea719d85f87753, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
     renderingLayerMask: 80
     maskLights: 1
     overridePostFX: 1
-    postFXSettings: {fileID: 11400000, guid: d94a752a408f74289904547dcd2d3fba, type: 2}
+    postFXSettings: {fileID: 11400000, guid: 48a228740b06d5b4c97c4331fce7e22c, type: 2}
     finalBlendMode:
       source: 1
       destination: 10
@@ -7344,7 +7343,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1289644781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8730,7 +8729,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &1550181582
 Light:
   m_ObjectHideFlags: 0
@@ -9638,8 +9637,8 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1
-    height: 1
+    width: 0.5
+    height: 0.5
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -9688,11 +9687,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
+    renderingLayerMask: 49
+    maskLights: 1
+    overridePostFX: 1
+    postFXSettings: {fileID: 0}
     finalBlendMode:
       source: 1
       destination: 0
-    overridePostFX: 0
-    postFXSettings: {fileID: 0}
 --- !u!1 &1695304134
 GameObject:
   m_ObjectHideFlags: 0
@@ -10197,11 +10198,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
+    renderingLayerMask: -1
+    maskLights: 0
+    overridePostFX: 0
+    postFXSettings: {fileID: 11400000, guid: 48a228740b06d5b4c97c4331fce7e22c, type: 2}
     finalBlendMode:
       source: 1
       destination: 0
-    overridePostFX: 0
-    postFXSettings: {fileID: 11400000, guid: 48a228740b06d5b4c97c4331fce7e22c, type: 2}
 --- !u!20 &1736817464
 Camera:
   m_ObjectHideFlags: 0
@@ -12066,7 +12069,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &2107786460
 Light:
   m_ObjectHideFlags: 0

@@ -59,7 +59,10 @@ public partial class CameraRenderer
         buffer.BeginSample(SampleName);
         ExecuteBuffer();
         // 设置光源信息并绘制阴影贴图
-        lighting.Setup(context, cullingResults, shadowSettings, useLightsPerObject);
+        lighting.Setup(
+            context, cullingResults, shadowSettings, useLightsPerObject,
+            cameraSettings.maskLights ? cameraSettings.renderingLayerMask : -1
+        );
         // 设置后处理信息
         postFXStack.Setup(
             context, camera, postFXSettings, useHDR, colorLUTResolution,
@@ -68,7 +71,7 @@ public partial class CameraRenderer
         buffer.EndSample(SampleName);
         // 设置相机信息并Clear Render Target
         Setup();
-        DrawVisibleGeometry(useDynamicBatching, useGPUInstancing, useLightsPerObject);
+        DrawVisibleGeometry(useDynamicBatching, useGPUInstancing, useLightsPerObject, cameraSettings.renderingLayerMask);
         DrawUnsupportedShaders();
         DrawGizmosBeforeFX();
         if (postFXStack.IsActive)
@@ -127,7 +130,8 @@ public partial class CameraRenderer
         litShaderTagId = new ShaderTagId("CustomLit");
 
     void DrawVisibleGeometry(
-        bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject
+        bool useDynamicBatching, bool useGPUInstancing, bool useLightsPerObject,
+        int renderingLayerMask
     )
     {
         PerObjectData lightsPerObjectFlags = useLightsPerObject ?
@@ -152,7 +156,9 @@ public partial class CameraRenderer
                 lightsPerObjectFlags
         };
         drawingSettings.SetShaderPassName(1, litShaderTagId);
-        var filteringSettings = new FilteringSettings(RenderQueueRange.opaque); // 不透明物体
+        var filteringSettings = new FilteringSettings(
+            RenderQueueRange.opaque, renderingLayerMask: (uint)renderingLayerMask
+        ); // 不透明物体
 
         context.DrawRenderers(cullingResults, ref drawingSettings, ref filteringSettings);
 
