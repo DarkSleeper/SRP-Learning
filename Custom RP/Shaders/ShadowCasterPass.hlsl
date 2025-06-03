@@ -8,7 +8,7 @@ struct Attributes {
 };
 
 struct Varyings {
-    float4 positionCS : SV_POSITION;
+    float4 positionCS_SS : SV_POSITION;
     float2 baseUV : VAR_BASE_UV;
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
@@ -20,15 +20,15 @@ Varyings ShadowCasterPassVertex(Attributes input) {
     UNITY_SETUP_INSTANCE_ID(input);
     UNITY_TRANSFER_INSTANCE_ID(input, output);
     float3 positionWS = TransformObjectToWorld(input.positionOS);
-    output.positionCS = TransformWorldToHClip(positionWS);
+    output.positionCS_SS = TransformWorldToHClip(positionWS);
     
     if (_ShadowPancaking) { // 把遮挡物压在近平面上
         #if UNITY_REVERSED_Z
-            output.positionCS.z = 
-                min(output.positionCS.z, output.positionCS.w * UNITY_NEAR_CLIP_VALUE);
+            output.positionCS_SS.z = 
+                min(output.positionCS_SS.z, output.positionCS_SS.w * UNITY_NEAR_CLIP_VALUE);
         #else
-            output.positionCS.z = 
-                max(output.positionCS.z, output.positionCS.w * UNITY_NEAR_CLIP_VALUE);
+            output.positionCS_SS.z = 
+                max(output.positionCS_SS.z, output.positionCS_SS.w * UNITY_NEAR_CLIP_VALUE);
         #endif
     }
 
@@ -38,13 +38,13 @@ Varyings ShadowCasterPassVertex(Attributes input) {
 
 void ShadowCasterPassFragment(Varyings input) {
     UNITY_SETUP_INSTANCE_ID(input);
-    ClipLOD(input.positionCS.xy, unity_LODFade.x);
-    InputConfig config = GetInputConfig(input.baseUV);
+    InputConfig config = GetInputConfig(input.positionCS_SS, input.baseUV);
+    ClipLOD(config.fragment, unity_LODFade.x); // LOD切换动画
     float4 base = GetBase(config);
     #if defined(_SHADOWS_CLIP)
         clip(base.a - GetCutOff(config));
     #elif defined(_SHADOWS_DITHER)
-        float dither = InterleavedGradientNoise(input.positionCS.xy, 0);
+        float dither = InterleavedGradientNoise(config.fragment.positionSS.xy, 0);
         clip(base.a - dither);
     #endif
 }

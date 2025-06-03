@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e45e1d4ae55148498c18d8673dc7ced, type: 3}
   m_Name: Custom Render Pipeline Asset
   m_EditorClassIdentifier: 
-  allowHDR: 1
+  cameraBuffer:
+    allowHDR: 1
+    copyColor: 1
+    copyColorReflection: 0
+    copyDepth: 1
+    copyDepthReflection: 0
   useDynamicBatching: 0
   useGPUInstancing: 1
   useSRPBatcher: 1
@@ -32,5 +37,6 @@ MonoBehaviour:
     other:
       atlasSize: 1024
       filter: 3
-  postFXSettings: {fileID: 0}
+  postFXSettings: {fileID: 11400000, guid: 656e9221cf930a145b08323d41e0ce63, type: 2}
   colorLUTResolution: 32
+  cameraRendererShader: {fileID: 4800000, guid: 8c6f5a93e7f05c34c88208aa4825e468, type: 3}

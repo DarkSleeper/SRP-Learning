@@ -6,7 +6,7 @@ public partial class CustomRenderPipeline : RenderPipeline
 {
     bool useDynamicBatching, useGPUInstancing, useLightsPerObject;
 
-    bool allowHDR;
+    CameraBufferSettings cameraBufferSettings;
 
     ShadowSettings shadowSettings;
 
@@ -15,14 +15,14 @@ public partial class CustomRenderPipeline : RenderPipeline
     int colorLUTResolution;
 
     public CustomRenderPipeline(
-        bool allowHDR,
+        CameraBufferSettings cameraBufferSettings,
         bool useDynamicBatching, bool useGPUInstancing, bool useSRPBatcher,
         bool useLightsPerObject, ShadowSettings shadowSettings,
-        PostFXSettings postFXSettings, int colorLUTResolution
+        PostFXSettings postFXSettings, int colorLUTResolution, Shader cameraRendererShader
     )
     {
         this.colorLUTResolution = colorLUTResolution;
-        this.allowHDR = allowHDR;
+        this.cameraBufferSettings = cameraBufferSettings;
         this.useDynamicBatching = useDynamicBatching;
         this.useGPUInstancing = useGPUInstancing;
         this.useLightsPerObject = useLightsPerObject;
@@ -32,9 +32,18 @@ public partial class CustomRenderPipeline : RenderPipeline
         this.postFXSettings = postFXSettings;
 
         InitializeForEditor(); // for point/spot light baking attenuation
+
+        renderer = new CameraRenderer(cameraRendererShader);
     }
 
-    CameraRenderer renderer = new CameraRenderer();
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        DisposeForEditor();
+        renderer.Dispose();
+    }
+
+    CameraRenderer renderer;
 
     protected override void Render(
         ScriptableRenderContext context, Camera[] cameras
@@ -45,7 +54,7 @@ public partial class CustomRenderPipeline : RenderPipeline
     ) { 
         for (int i = 0; i < cameras.Count; i++) {
             renderer.Render(
-                context, cameras[i], allowHDR,
+                context, cameras[i], cameraBufferSettings,
                 useDynamicBatching, useGPUInstancing, useLightsPerObject,
                 shadowSettings, postFXSettings, colorLUTResolution
             );

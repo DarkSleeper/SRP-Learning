@@ -9,8 +9,6 @@ struct Varyings {
     float2 screenUV : VAR_SCREEN_UV;
 };
 
-float4 _ProjectionParams;
-
 Varyings DefaultPassVertex (uint vertexID : SV_VertexID) {
     Varyings output;
     // 覆盖(-1, -1)到(1, 1)的矩形
@@ -32,7 +30,6 @@ Varyings DefaultPassVertex (uint vertexID : SV_VertexID) {
 
 TEXTURE2D(_PostFXSource);
 TEXTURE2D(_PostFXSource2);
-SAMPLER(sampler_linear_clamp);
 
 float4 _PostFXSource_TexelSize;
 

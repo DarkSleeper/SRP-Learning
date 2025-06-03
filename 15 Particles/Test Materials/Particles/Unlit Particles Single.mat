@@ -11,14 +11,14 @@ Material:
   m_Shader: {fileID: 4800000, guid: 9f27694dd95b5a34d866354ce9b8123a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords:
+  m_ValidKeywords:
   - _DISTORTION
   - _NEAR_FADE
-  - _RECEIVE_SHADOWS
-  - _SHADOWS_OFF
   - _SOFT_PARTICLES
   - _VERTEX_COLORS
+  m_InvalidKeywords:
+  - _RECEIVE_SHADOWS
+  - _SHADOWS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
