@@ -24,6 +24,7 @@ public partial class CameraRenderer
     PostFXStack postFXStack = new PostFXStack();
 
     static int
+        bufferSizeId = Shader.PropertyToID("_CameraBufferSize"),
         colorAttachmentId = Shader.PropertyToID("_CameraColorAttachment"),
         depthAttachmentId = Shader.PropertyToID("_CameraDepthAttachment"),
         colorTextureId = Shader.PropertyToID("_CameraColorTexture"),
@@ -32,7 +33,11 @@ public partial class CameraRenderer
         srcBlendId = Shader.PropertyToID("_CameraSrcBlend"),
         dstBlendId = Shader.PropertyToID("_CameraDstBlend");
 
-    bool useHDR;
+    bool useHDR, useScaledRendering;
+
+    public const float renderScaleMin = 0.1f, renderScaleMax = 2f;
+    
+    Vector2Int bufferSize;
 
     static CameraSettings defaultCameraSettings = new CameraSettings();
 
@@ -72,15 +77,33 @@ public partial class CameraRenderer
             postFXSettings = cameraSettings.postFXSettings;
         }
 
+        float renderScale = cameraSettings.GetRenderScale(bufferSettings.renderScale); // 结合每个摄像机的设置
+        useScaledRendering = renderScale < 0.99f || renderScale > 1.01f;
         PrepareBuffer();
         PrepareForSceneWindow();
-        if (!Cull(shadowSettings.maxDistance))
+        if (!Cull(shadowSettings.maxDistance)) // 场景剔除
         {
             return;
         }
         useHDR = bufferSettings.allowHDR && camera.allowHDR;
+        // 设置目标缓冲区大小
+        if (useScaledRendering)
+        {
+            renderScale = Mathf.Clamp(renderScale, renderScaleMin, renderScaleMax);
+            bufferSize.x = (int)(camera.pixelWidth * renderScale);
+            bufferSize.y = (int)(camera.pixelHeight * renderScale);
+        }
+        else
+        {
+            bufferSize.x = camera.pixelWidth;
+            bufferSize.y = camera.pixelHeight;
+        }
 
         buffer.BeginSample(SampleName);
+        buffer.SetGlobalVector(bufferSizeId, new Vector4(
+            1f / bufferSize.x, 1f / bufferSize.y,
+            bufferSize.x, bufferSize.y
+        ));
         ExecuteBuffer();
         // 设置光源信息并绘制阴影贴图
         lighting.Setup(
@@ -89,8 +112,8 @@ public partial class CameraRenderer
         );
         // 设置后处理信息
         postFXStack.Setup(
-            context, camera, postFXSettings, useHDR, colorLUTResolution,
-            cameraSettings.finalBlendMode
+            context, camera, bufferSize, postFXSettings, useHDR, colorLUTResolution,
+            cameraSettings.finalBlendMode, bufferSettings.bicubicRescaling
         );
         buffer.EndSample(SampleName);
         // 设置相机信息并Clear Render Target
@@ -127,20 +150,21 @@ public partial class CameraRenderer
         context.SetupCameraProperties(camera);
         CameraClearFlags flags = camera.clearFlags;
 
-        useIntermediateBuffer = useColorTexture || useDepthTexture || postFXStack.IsActive;
+        useIntermediateBuffer = useScaledRendering || // 使用自定义分辨率
+            useColorTexture || useDepthTexture || postFXStack.IsActive;
         if (useIntermediateBuffer)
         {
             if (flags > CameraClearFlags.Color)
             {
                 flags = CameraClearFlags.Color;
             }
-            // 对于后处理，先绘制到指定的贴图上
+            // 先绘制到指定的贴图上
             buffer.GetTemporaryRT(
-                colorAttachmentId, camera.pixelWidth, camera.pixelHeight,
+                colorAttachmentId, bufferSize.x, bufferSize.y,
                 0, FilterMode.Bilinear, useHDR ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.Default
             );
             buffer.GetTemporaryRT(
-                depthAttachmentId, camera.pixelWidth, camera.pixelHeight,
+                depthAttachmentId, bufferSize.x, bufferSize.y,
                 32, FilterMode.Point, RenderTextureFormat.Depth
             );
             buffer.SetRenderTarget(
@@ -249,7 +273,7 @@ public partial class CameraRenderer
         if (useColorTexture) // 拷贝颜色缓冲区
         {
             buffer.GetTemporaryRT(
-                colorTextureId, camera.pixelWidth, camera.pixelHeight,
+                colorTextureId, bufferSize.x, bufferSize.y,
                 0, FilterMode.Bilinear, useHDR ? RenderTextureFormat.DefaultHDR : RenderTextureFormat.Default
             );
             if (copyTextureSupported)
@@ -264,7 +288,7 @@ public partial class CameraRenderer
         if (useDepthTexture) // 拷贝深度缓冲区
         {
             buffer.GetTemporaryRT(
-                depthTextureId, camera.pixelWidth, camera.pixelHeight,
+                depthTextureId, bufferSize.x, bufferSize.y,
                 32, FilterMode.Point, RenderTextureFormat.Depth
             );
             if (copyTextureSupported)

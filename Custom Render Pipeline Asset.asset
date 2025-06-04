@@ -18,6 +18,8 @@ MonoBehaviour:
     copyColorReflection: 0
     copyDepth: 1
     copyDepthReflection: 0
+    renderScale: 1
+    bicubicRescaling: 1
   useDynamicBatching: 0
   useGPUInstancing: 1
   useSRPBatcher: 1

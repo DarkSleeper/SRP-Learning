@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using UnityEngine.Rendering;
 
 [Serializable]
@@ -10,6 +11,21 @@ public class CameraSettings
     public int renderingLayerMask = -1;
 
     public bool maskLights = false;
+
+    public enum RenderScaleMode { Inherit, Multiply, Override }
+
+    public RenderScaleMode renderScaleMode = RenderScaleMode.Inherit;
+
+    [Range(CameraRenderer.renderScaleMin, CameraRenderer.renderScaleMax)]
+    public float renderScale = 1f;
+
+    public float GetRenderScale(float scale)
+    {
+        return
+            renderScaleMode == RenderScaleMode.Inherit ? scale :
+            renderScaleMode == RenderScaleMode.Override ? renderScale :
+            scale * renderScale;
+    }
 
     public bool overridePostFX = false;
 
