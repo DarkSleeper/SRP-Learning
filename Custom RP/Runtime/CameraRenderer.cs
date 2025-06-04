@@ -111,9 +111,11 @@ public partial class CameraRenderer
             cameraSettings.maskLights ? cameraSettings.renderingLayerMask : -1
         );
         // 设置后处理信息
+        bufferSettings.fxaa.enabled &= cameraSettings.allowFXAA;
         postFXStack.Setup(
-            context, camera, bufferSize, postFXSettings, useHDR, colorLUTResolution,
-            cameraSettings.finalBlendMode, bufferSettings.bicubicRescaling
+            context, camera, bufferSize, postFXSettings, cameraSettings.keepAlpha, useHDR,
+            colorLUTResolution, cameraSettings.finalBlendMode,
+            bufferSettings.bicubicRescaling, bufferSettings.fxaa
         );
         buffer.EndSample(SampleName);
         // 设置相机信息并Clear Render Target
