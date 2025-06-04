@@ -40,7 +40,7 @@ bool CanSkipFXAA(LumaNeighborhood luma) {
     return luma.range < max(_FXAAConfig.x, _FXAAConfig.y * luma.highest);
 }
 
-// 猜测子像素的值
+// 与子像素的混合值
 float GetSubpixelBlendFactor(LumaNeighborhood luma) {
     // weighted average
     float filter = 2.0 * (luma.n + luma.e + luma.s + luma.w);
@@ -70,6 +70,7 @@ bool IsHorizontalEdge(LumaNeighborhood luma) {
 struct FXAAEdge {
     bool isHorizontal;
     float pixelStep;
+    float lumaGradient, otherLuma;
 };
 
 // 获取要混合的边缘信息
@@ -92,8 +93,107 @@ FXAAEdge GetFXAAEdge(LumaNeighborhood luma) {
     // 选择插值大的方向
     if (gradientP < gradientN) {
         edge.pixelStep = -edge.pixelStep;
+        edge.lumaGradient = gradientN;
+        edge.otherLuma = lumaN;
+    }
+    else {
+        edge.lumaGradient = gradientP;
+        edge.otherLuma = lumaP;
     }
     return edge;
+}
+
+#if defined(FXAA_QUALITY_LOW)
+    #define EXTRA_EDGE_STEPS 3
+    #define EDGE_STEP_SIZES 1.5, 2.0, 2.0
+    #define LAST_EDGE_STEP_GUESS 8.0
+#elif defined(FXAA_QUALITY_MEDIUM)
+    #define EXTRA_EDGE_STEPS 8
+    #define EDGE_STEP_SIZES 1.5, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 4.0
+    #define LAST_EDGE_STEP_GUESS 8.0
+#else
+    #define EXTRA_EDGE_STEPS 10
+    #define EDGE_STEP_SIZES 1.0, 1.0, 1.0, 1.0, 1.5, 2.0, 2.0, 2.0, 2.0, 4.0
+    #define LAST_EDGE_STEP_GUESS 8.0
+#endif
+
+static const float edgeStepSizes[EXTRA_EDGE_STEPS] = { EDGE_STEP_SIZES };
+
+float GetEdgeBlendFactor(LumaNeighborhood luma, FXAAEdge edge, float2 uv) {
+    float2 edgeUV = uv;
+    float2 uvStep = 0.0;
+    if (edge.isHorizontal) { // 沿水平线采样
+        edgeUV.y += 0.5 * edge.pixelStep;
+        uvStep.x = GetSourceTexelSize().x;
+    }
+    else { // 沿垂直线采样
+        edgeUV.x += 0.5 * edge.pixelStep;
+        uvStep.y = GetSourceTexelSize().y;
+    }
+
+    float edgeLuma = 0.5 * (luma.m + edge.otherLuma);
+    float gradientThreshold = 0.25 * edge.lumaGradient;
+
+    // 沿正方向采样到端点
+    float2 uvP = edgeUV + uvStep;
+    float lumaDeltaP = GetLuma(uvP) - edgeLuma;
+    bool atEndP = abs(lumaDeltaP) >= gradientThreshold;
+
+    int i;
+    UNITY_UNROLL
+    for (i = 0; i < EXTRA_EDGE_STEPS && !atEndP; i++) {
+        uvP += uvStep * edgeStepSizes[i];
+        lumaDeltaP = GetLuma(uvP) - edgeLuma;
+        atEndP = abs(lumaDeltaP) >= gradientThreshold;
+    }
+    if (!atEndP) { // 如果还没找到，那么猜测还有一个点
+        uvP += uvStep * LAST_EDGE_STEP_GUESS;
+    }
+
+    // 沿反方向采样到端点
+    float2 uvN = edgeUV - uvStep;
+    float lumaDeltaN = GetLuma(uvN) - edgeLuma;
+    bool atEndN = abs(lumaDeltaN) >= gradientThreshold;
+
+    UNITY_UNROLL
+    for (i = 0; i < EXTRA_EDGE_STEPS && !atEndN; i++) {
+        uvN -= uvStep * edgeStepSizes[i];
+        lumaDeltaN = GetLuma(uvN) - edgeLuma;
+        atEndN = abs(lumaDeltaN) >= gradientThreshold;
+    }
+    if (!atEndN) { // 如果还没找到，那么猜测还有一个点
+        uvN -= uvStep * LAST_EDGE_STEP_GUESS;
+    }
+
+    float distanceToEndP, distanceToEndN;
+    if (edge.isHorizontal) {
+        distanceToEndP = uvP.x - uv.x;
+        distanceToEndN = uv.x - uvN.x;
+    }
+    else {
+        distanceToEndP = uvP.y - uv.y;
+        distanceToEndN = uv.y - uvN.y;
+    }
+
+    // 到端点的最近距离
+    float distanceToNearestEnd;
+    bool deltaSign;
+    if (distanceToEndP <= distanceToEndN) {
+        distanceToNearestEnd = distanceToEndP;
+        deltaSign = lumaDeltaP >= 0;
+    }
+    else {
+        distanceToNearestEnd = distanceToEndN;
+        deltaSign = lumaDeltaN >= 0;
+    }
+
+    // 如果最后端点的梯度方向与采样点的相同，表示当前点是远离边缘的
+    if (deltaSign == (luma.m - edgeLuma >= 0)) {
+        return 0.0;
+    }
+    else {
+        return 0.5 - distanceToNearestEnd / (distanceToEndP + distanceToEndN);
+    }
 }
 
 float4 FXAAPassFragment(Varyings input) : SV_TARGET {
@@ -105,7 +205,9 @@ float4 FXAAPassFragment(Varyings input) : SV_TARGET {
 
     FXAAEdge edge = GetFXAAEdge(luma);
 
-    float blendFactor = GetSubpixelBlendFactor(luma);
+    float blendFactor = max(
+        GetSubpixelBlendFactor(luma), GetEdgeBlendFactor(luma, edge, input.screenUV)
+    );
     float2 blendUV = input.screenUV;
     if (edge.isHorizontal) {
         blendUV.y += blendFactor * edge.pixelStep;
