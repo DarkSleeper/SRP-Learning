@@ -14424,8 +14424,12 @@ MonoBehaviour:
     copyDepth: 1
     renderingLayerMask: -1
     maskLights: 0
-    overridePostFX: 0
-    postFXSettings: {fileID: 0}
+    renderScaleMode: 0
+    renderScale: 1
+    overridePostFX: 1
+    postFXSettings: {fileID: 11400000, guid: 656e9221cf930a145b08323d41e0ce63, type: 2}
+    allowFXAA: 0
+    keepAlpha: 0
     finalBlendMode:
       source: 1
       destination: 0

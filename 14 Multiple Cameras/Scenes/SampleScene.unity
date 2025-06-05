@@ -3319,10 +3319,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
+    copyColor: 1
+    copyDepth: 1
     renderingLayerMask: 8
     maskLights: 1
+    renderScaleMode: 0
+    renderScale: 1
     overridePostFX: 1
     postFXSettings: {fileID: 11400000, guid: aa636cde4dfffac48baf2ffc95fb3b0a, type: 2}
+    allowFXAA: 0
+    keepAlpha: 0
     finalBlendMode:
       source: 1
       destination: 10
@@ -3489,10 +3495,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
+    copyColor: 1
+    copyDepth: 1
     renderingLayerMask: 5
     maskLights: 1
-    overridePostFX: 0
-    postFXSettings: {fileID: 0}
+    renderScaleMode: 0
+    renderScale: 1
+    overridePostFX: 1
+    postFXSettings: {fileID: 11400000, guid: 656e9221cf930a145b08323d41e0ce63, type: 2}
+    allowFXAA: 0
+    keepAlpha: 0
     finalBlendMode:
       source: 1
       destination: 0
@@ -6163,10 +6175,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
+    copyColor: 1
+    copyDepth: 1
     renderingLayerMask: 3
     maskLights: 1
+    renderScaleMode: 0
+    renderScale: 1
     overridePostFX: 0
     postFXSettings: {fileID: 0}
+    allowFXAA: 0
+    keepAlpha: 0
     finalBlendMode:
       source: 1
       destination: 0
@@ -6607,10 +6625,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
+    copyColor: 1
+    copyDepth: 1
     renderingLayerMask: 80
     maskLights: 1
+    renderScaleMode: 0
+    renderScale: 1
     overridePostFX: 1
     postFXSettings: {fileID: 11400000, guid: 48a228740b06d5b4c97c4331fce7e22c, type: 2}
+    allowFXAA: 0
+    keepAlpha: 0
     finalBlendMode:
       source: 1
       destination: 10
@@ -9687,10 +9711,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
+    copyColor: 1
+    copyDepth: 1
     renderingLayerMask: 49
     maskLights: 1
+    renderScaleMode: 0
+    renderScale: 1
     overridePostFX: 1
     postFXSettings: {fileID: 0}
+    allowFXAA: 0
+    keepAlpha: 0
     finalBlendMode:
       source: 1
       destination: 0
@@ -10198,10 +10228,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
+    copyColor: 1
+    copyDepth: 1
     renderingLayerMask: -1
     maskLights: 0
+    renderScaleMode: 0
+    renderScale: 1
     overridePostFX: 0
     postFXSettings: {fileID: 11400000, guid: 48a228740b06d5b4c97c4331fce7e22c, type: 2}
+    allowFXAA: 0
+    keepAlpha: 0
     finalBlendMode:
       source: 1
       destination: 0
