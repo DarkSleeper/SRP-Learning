@@ -130,6 +130,7 @@ public partial class CameraRenderer
         else if (useIntermediateBuffer)
         {
             DrawFinal(cameraSettings.finalBlendMode);
+			ExecuteBuffer();
         }
         DrawGizmosAfterFX();
         Cleanup();
